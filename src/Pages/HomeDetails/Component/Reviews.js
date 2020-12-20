@@ -11,7 +11,6 @@ const Reviews = ({ stayId }) => {
   const [reviews, setReviews] = useState([]);
   const [info, setInfo] = useState({});
   const userReviewArr = reviews.slice(0, 6);
-  // const [location, setLocation] = useState("reviews");
 
   const API = `http://10.58.1.75:8000/review/list`;
 
@@ -25,10 +24,8 @@ const Reviews = ({ stayId }) => {
 
   useEffect(() => {
     fetchData();
-    console.log(info && info.overall_star);
   });
 
-  console.log(reviews);
   return (
     <StyledReviews>
       <h3>
@@ -44,7 +41,6 @@ const Reviews = ({ stayId }) => {
               userName={review.user_name}
               date={review.review_date}
               detail={review.review_body}
-              // location={location}
             />
           ))}
       </ReviewCon>
@@ -53,7 +49,6 @@ const Reviews = ({ stayId }) => {
           stayId={stayId}
           avrStar={info.overall_star}
           reviewNum={info.review_count}
-          // reviewData={data}
           active={isVisible}
           event={setIsVisible}
         ></ReviewModal>
@@ -68,11 +63,8 @@ const Reviews = ({ stayId }) => {
 export default Reviews;
 
 const StyledReviews = styled.div`
-  /* border: 1px solid red; */
   padding: 48px 0;
-  /* height: 560px; */
   border-top: 1px solid #d3d3d3;
-  /* overflow: hidden; */
 
   h3 {
     color: #222222;

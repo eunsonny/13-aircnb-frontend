@@ -5,26 +5,12 @@ import { faStar } from "@fortawesome/free-solid-svg-icons";
 import Review from "./Review";
 
 const LIMIT = 5;
-const ReviewModal = ({
-  reviewData,
-  active,
-  event,
-  stayId,
-  avrStar,
-  reviewNum,
-}) => {
+const ReviewModal = ({ active, event, stayId, avrStar, reviewNum }) => {
   const [location, setLocation] = useState("modal");
   const [reviews, setReviews] = useState([]);
   const [offset, setOffset] = useState(0);
-  const [fetching, setFetching] = useState(false);
 
   const API = `http://10.58.1.75:8000/review/list`;
-
-  const setDataFormat = (dataValue) => {
-    const year = dataValue.split("-")[0];
-    const month = dataValue.split("-")[1];
-    return `${year}년 ${month}월`;
-  };
 
   async function fetchData() {
     const res = await fetch(`${API}?offset=0&limit=6&stay_id=${stayId}`);
@@ -35,22 +21,19 @@ const ReviewModal = ({
 
   useEffect(() => {
     fetchData();
-    console.log(reviews);
   }, []);
 
   useEffect(() => {
-    // scroll event listener 등록
     document
       .querySelector("#reviewContent")
       .addEventListener("scroll", handleScroll);
-    console.log(fetching, offset);
+    fetchMoreReviews();
     return () => {
-      // scroll event listener 해제
-      // document
-      //   .querySelector("#reviewContent")
-      //   .removeEventListener("scroll", handleScroll);
+      document
+        .querySelector("#reviewContent")
+        .removeEventListener("scroll", handleScroll);
     };
-  });
+  }, [offset]);
 
   const handleScroll = () => {
     const clientHeight = document.querySelector("#reviewContent")?.clientHeight;
@@ -58,32 +41,19 @@ const ReviewModal = ({
     const scrollTop = document.querySelector("#reviewContent")?.scrollTop;
 
     if (scrollTop + clientHeight >= scrollHeight) {
-      setOffset(Number(LIMIT) + Number(offset));
-      fetchMoreReviews();
+      setOffset(LIMIT + Number(offset));
     }
   };
 
   async function fetchMoreReviews() {
-    setFetching(true);
     const res = await fetch(
       `http://10.58.1.75:8000/review/list?offset=${offset}&limit=${LIMIT}&stay_id=${stayId}`
     );
     res.json().then((res) => {
       setReviews([...reviews, ...res.review_list]);
-      setFetching(false);
     });
   }
 
-  // console.log(
-  //   "clientHeight >>",
-  //   document.querySelector("#reviewContent")?.clientHeight,
-  //   "scrollHeight >>",
-  //   document.querySelector("#reviewContent")?.scrollHeight,
-  //   "scrollTop >>",
-  //   document.querySelector("#reviewContent")?.scrollTop,
-  //   "reviews>>",
-  //   reviews
-  // );
   return (
     <StyledReviewModal active={active}>
       <AllReviews active={active}>
